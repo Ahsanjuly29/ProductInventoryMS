@@ -1,0 +1,125 @@
+openapi: 3.0.0
+info:
+  title: E-Commerce Order Management API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/v1
+
+paths:
+
+  /auth/login:
+    post:
+      summary: Login User
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Successful Login
+
+  /auth/register:
+    post:
+      summary: Register User
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+      responses:
+        201:
+          description: User Registered
+
+  /products:
+    get:
+      summary: Get all products
+      tags: [Products]
+      responses:
+        200:
+          description: Product List
+
+    post:
+      summary: Create Product
+      tags: [Products]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                sku: { type: string }
+                price: { type: number }
+      responses:
+        201:
+          description: Product Created
+
+  /orders:
+    post:
+      summary: Create Order
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      variant_id: { type: integer }
+                      quantity: { type: integer }
+      responses:
+        201:
+          description: Order Created
+
+  /orders/{id}/cancel:
+    post:
+      summary: Cancel Order
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Order Cancelled
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
